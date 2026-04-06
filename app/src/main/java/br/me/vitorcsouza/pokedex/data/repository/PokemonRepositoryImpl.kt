@@ -18,10 +18,8 @@ class PokemonRepositoryImpl(
         offset: Int
     ): Result<List<Pokemon>> {
         return try {
-            // 1. Tenta buscar no banco apenas o intervalo solicitado
             val localPokemon = dao.getAllPokemon().first()
 
-            // 2. Se o que temos no banco é menor que o offset + limit, buscamos na API
             if (localPokemon.size < offset + limit) {
                 val response = api.getPokemonList(limit, offset)
                 
@@ -32,11 +30,8 @@ class PokemonRepositoryImpl(
 
                 dao.insertPokemonList(entities)
             }
-            
-            // 3. Busca APENAS os itens da página atual para evitar renderizar tudo de novo na UI
             val allUpdated = dao.getAllPokemon().first().sortedBy { it.id }
-            
-            // Retornamos apenas os novos pokemons (a fatia da página)
+
             val fromIndex = offset.coerceAtMost(allUpdated.size)
             val toIndex = (offset + limit).coerceAtMost(allUpdated.size)
             
