@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import br.me.vitorcsouza.pokedex.ui.AppIcon
-import br.me.vitorcsouza.pokedex.ui.SplashScreen
+import br.me.vitorcsouza.pokedex.ui.presentation.appicon.AppIcon
+import br.me.vitorcsouza.pokedex.ui.presentation.splash.SplashScreen
 import br.me.vitorcsouza.pokedex.ui.theme.PokedexTheme
 
 class MainActivity : ComponentActivity() {

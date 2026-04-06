@@ -1,4 +1,4 @@
-package br.me.vitorcsouza.pokedex.ui
+package br.me.vitorcsouza.pokedex.ui.presentation.splash
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
