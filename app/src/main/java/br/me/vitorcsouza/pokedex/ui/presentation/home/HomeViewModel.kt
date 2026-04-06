@@ -14,27 +14,39 @@ class HomeViewModel(
     var state by mutableStateOf(HomeState())
         private set
 
+    private val pageSize = 20
+
     init {
         loadPokemon()
     }
 
-    private fun loadPokemon() {
+    fun loadPokemon() {
+        if (state.isPaginateLoading || state.endReached) return
+
         viewModelScope.launch {
             state = state.copy(
-                isLoading = true
+                isPaginateLoading = true,
+                isLoading = state.pokemonList.isEmpty()
             )
-            getAllPokemon(20, 0)
-                .onSuccess { pokemonList ->
+            
+            val offset = state.page * pageSize
+            
+            getAllPokemon(pageSize, offset)
+                .onSuccess { newList ->
                     state = state.copy(
-                        pokemonList = pokemonList,
+                        pokemonList = state.pokemonList + newList,
                         isLoading = false,
+                        isPaginateLoading = false,
+                        endReached = newList.isEmpty(),
+                        page = state.page + 1,
                         error = null
                     )
                 }
                 .onFailure {
                     state = state.copy(
                         error = it.message,
-                        isLoading = false
+                        isLoading = false,
+                        isPaginateLoading = false
                     )
                 }
         }
@@ -42,6 +54,5 @@ class HomeViewModel(
 
     fun onSearchQueryChange(newQuery: String) {
         state = state.copy(searchQuery = newQuery)
-        // Aqui você pode adicionar lógica de filtro futuramente
     }
 }
