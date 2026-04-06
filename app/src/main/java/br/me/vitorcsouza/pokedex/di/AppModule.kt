@@ -6,7 +6,9 @@ import br.me.vitorcsouza.pokedex.data.remote.PokeApi
 import br.me.vitorcsouza.pokedex.data.repository.PokemonRepositoryImpl
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
+import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeViewModel
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -36,4 +38,7 @@ val AppModule = module {
 
     // UseCases
     factory { GetAllPokemon(get()) }
+
+    // ViewModels
+    viewModel { HomeViewModel(get()) }
 }

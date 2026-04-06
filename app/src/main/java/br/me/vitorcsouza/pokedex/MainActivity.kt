@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import br.me.vitorcsouza.pokedex.ui.presentation.appicon.AppIcon
+import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.splash.SplashScreen
 import br.me.vitorcsouza.pokedex.ui.theme.PokedexTheme
 
@@ -20,15 +21,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             var showSplash by remember { mutableStateOf(true) }
             
-            PokedexTheme {
+            PokedexTheme(darkTheme = false) {
                 if (showSplash) {
                     SplashScreen(onFinished = { showSplash = false })
                 } else {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        AppIcon(
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
+                    HomeScreen()
                 }
             }
         }

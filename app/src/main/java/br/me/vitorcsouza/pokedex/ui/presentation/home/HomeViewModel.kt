@@ -40,14 +40,8 @@ class HomeViewModel(
         }
     }
 
-    private fun searchPokemon() {
-        viewModelScope.launch {
-            state = state.copy(
-                isLoading = true
-            )
-
-        }
+    fun onSearchQueryChange(newQuery: String) {
+        state = state.copy(searchQuery = newQuery)
+        // Aqui você pode adicionar lógica de filtro futuramente
     }
-
-
 }
