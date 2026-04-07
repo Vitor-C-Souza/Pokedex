@@ -1,7 +1,25 @@
 package br.me.vitorcsouza.pokedex.domain.model
 
 import androidx.compose.ui.graphics.Color
-import br.me.vitorcsouza.pokedex.ui.theme.*
+import br.me.vitorcsouza.pokedex.ui.theme.TypeBug
+import br.me.vitorcsouza.pokedex.ui.theme.TypeDark
+import br.me.vitorcsouza.pokedex.ui.theme.TypeDragon
+import br.me.vitorcsouza.pokedex.ui.theme.TypeElectric
+import br.me.vitorcsouza.pokedex.ui.theme.TypeFairy
+import br.me.vitorcsouza.pokedex.ui.theme.TypeFighting
+import br.me.vitorcsouza.pokedex.ui.theme.TypeFire
+import br.me.vitorcsouza.pokedex.ui.theme.TypeFlying
+import br.me.vitorcsouza.pokedex.ui.theme.TypeGhost
+import br.me.vitorcsouza.pokedex.ui.theme.TypeGrass
+import br.me.vitorcsouza.pokedex.ui.theme.TypeGround
+import br.me.vitorcsouza.pokedex.ui.theme.TypeIce
+import br.me.vitorcsouza.pokedex.ui.theme.TypeNormal
+import br.me.vitorcsouza.pokedex.ui.theme.TypePoison
+import br.me.vitorcsouza.pokedex.ui.theme.TypePsychic
+import br.me.vitorcsouza.pokedex.ui.theme.TypeRock
+import br.me.vitorcsouza.pokedex.ui.theme.TypeSteel
+import br.me.vitorcsouza.pokedex.ui.theme.TypeUnknown
+import br.me.vitorcsouza.pokedex.ui.theme.TypeWater
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +35,8 @@ data class Pokemon(
     val defense: Int,
     val specialAttack: Int,
     val specialDefense: Int,
-    val speed: Int
+    val speed: Int,
+    val description: String = ""
 ) {
     val formattedId: String get() = "#${id.toString().padStart(3, '0')}"
     

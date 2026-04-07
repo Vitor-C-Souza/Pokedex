@@ -4,7 +4,7 @@ import br.me.vitorcsouza.pokedex.data.local.entity.PokemonEntity
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonDetailDto
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 
-fun PokemonDetailDto.toEntity(): PokemonEntity {
+fun PokemonDetailDto.toEntity(description: String = ""): PokemonEntity {
     val hp = stats.find { it.stat.name == "hp" }?.baseStat ?: 0
     val attack = stats.find { it.stat.name == "attack" }?.baseStat ?: 0
     val defense = stats.find { it.stat.name == "defense" }?.baseStat ?: 0
@@ -24,7 +24,8 @@ fun PokemonDetailDto.toEntity(): PokemonEntity {
         defense = defense,
         specialAttack = specialAttack,
         specialDefense = specialDefense,
-        speed = speed
+        speed = speed,
+        description = description
     )
 }
 
@@ -41,6 +42,7 @@ fun PokemonEntity.toDomain(): Pokemon {
         defense = defense,
         specialAttack = specialAttack,
         specialDefense = specialDefense,
-        speed = speed
+        speed = speed,
+        description = description
     )
 }

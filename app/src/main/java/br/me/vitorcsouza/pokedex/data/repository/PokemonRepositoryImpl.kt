@@ -27,7 +27,14 @@ class PokemonRepositoryImpl(
                 
                 val entities = response.results.map { basicPokemon ->
                     val details = api.getPokemonDetail(basicPokemon.name)
-                    details.toEntity()
+                    val species = api.getPokemonSpecies(details.id)
+                    val description = species.flavorTextEntries
+                        .find { it.language.name == "en" }
+                        ?.flavorText
+                        ?.replace("\n", " ")
+                        ?.replace("\u000c", " ") ?: ""
+
+                    details.toEntity(description)
                 }
 
                 dao.insertPokemonList(entities)
@@ -56,7 +63,14 @@ class PokemonRepositoryImpl(
         return try {
             // Busca na API (sempre em minúsculo e sem espaços)
             val details = api.getPokemonDetail(nameOrId.lowercase().trim())
-            val entity = details.toEntity()
+            val species = api.getPokemonSpecies(details.id)
+            val description = species.flavorTextEntries
+                .find { it.language.name == "en" }
+                ?.flavorText
+                ?.replace("\n", " ")
+                ?.replace("\u000c", " ") ?: ""
+
+            val entity = details.toEntity(description)
             
             // Salva no banco de dados local
             dao.insertPokemonList(listOf(entity))

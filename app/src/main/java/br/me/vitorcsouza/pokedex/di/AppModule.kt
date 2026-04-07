@@ -6,6 +6,7 @@ import br.me.vitorcsouza.pokedex.data.remote.PokeApi
 import br.me.vitorcsouza.pokedex.data.repository.PokemonRepositoryImpl
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
+import br.me.vitorcsouza.pokedex.domain.usecase.GetPokemonByNameOrId
 import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -40,6 +41,7 @@ val AppModule = module {
     // UseCases
     factory { GetAllPokemon(get()) }
     factory { SearchPokemon(get()) }
+    factory { GetPokemonByNameOrId(get()) }
 
     // ViewModels
     viewModel { HomeViewModel(get(), get()) }
