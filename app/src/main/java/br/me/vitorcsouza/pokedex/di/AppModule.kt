@@ -8,6 +8,7 @@ import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
 import br.me.vitorcsouza.pokedex.domain.usecase.GetPokemonByNameOrId
 import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
+import br.me.vitorcsouza.pokedex.ui.presentation.details.DetailsViewModel
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -22,7 +23,9 @@ val AppModule = module {
             androidApplication(),
             Database::class.java,
             "pokemon_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
     single { get<Database>().pokemonDao }
 
@@ -45,4 +48,5 @@ val AppModule = module {
 
     // ViewModels
     viewModel { HomeViewModel(get(), get()) }
+    viewModel { DetailsViewModel(get(), get()) }
 }

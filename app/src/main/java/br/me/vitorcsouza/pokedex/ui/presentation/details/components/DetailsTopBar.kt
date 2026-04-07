@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.domain.model.PokemonType
 import br.me.vitorcsouza.pokedex.ui.components.TypeBadge
@@ -41,32 +42,32 @@ fun DetailsTopBar(
     val primaryType = pokemon.pokemonTypes.firstOrNull() ?: PokemonType.UNKNOWN
     val cardColor = primaryType.color
 
-    // 1. Usamos um Box principal para permitir sobreposição
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(0.dp, 0.dp, 36.dp, 36.dp))
-            .background(cardColor)
+        modifier = modifier.fillMaxWidth()
     ) {
-
-
         Box(
             modifier = Modifier
-                .size(250.dp)
-                .offset(x = 120.dp, y = (-50).dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.15f))
-                .align(Alignment.TopEnd),
-        )
-
+                .fillMaxWidth()
+                .matchParentSize()
+                .clip(RoundedCornerShape(0.dp, 0.dp, 40.dp, 40.dp))
+                .background(cardColor)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(250.dp)
+                    .offset(x = 120.dp, y = (-50).dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.15f))
+                    .align(Alignment.TopEnd),
+            )
+        }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 24.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 0.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Row dos botões (Back e Favorite)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -98,8 +99,6 @@ fun DetailsTopBar(
                     )
                 }
             }
-
-            // Informações do Pokemon
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
@@ -128,15 +127,14 @@ fun DetailsTopBar(
                     }
                 }
             }
-
-            // Imagem centralizada
             AsyncImage(
                 model = pokemon.imageUrl,
                 contentDescription = pokemon.name,
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.CenterHorizontally)
-                    .offset(y = 80.dp),
+                    .offset(y = 60.dp)
+                    .zIndex(10f),
             )
         }
     }
@@ -159,10 +157,9 @@ private fun DetailsTopBarPreview() {
             speed = 45,
             specialAttack = 65,
             specialDefense = 65,
-            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger."
+            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back."
         ),
         onBackClick = {},
         onFavoriteClick = {}
     )
 }
-

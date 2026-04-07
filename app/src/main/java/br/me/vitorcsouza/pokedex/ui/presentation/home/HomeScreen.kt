@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.home.components.CardPokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.home.components.HomeHeader
 import org.koin.androidx.compose.koinViewModel
@@ -24,7 +25,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    onPokemonClick: (Pokemon) -> Unit = {}
 ) {
     val state = viewModel.state
 
@@ -32,7 +34,8 @@ fun HomeScreen(
         state = state,
         modifier = modifier,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
-        onLoadNextPage = { viewModel.loadPokemon() }
+        onLoadNextPage = { viewModel.loadPokemon() },
+        onPokemonClick = onPokemonClick
     )
 }
 
@@ -41,7 +44,8 @@ fun HomeScreenContent(
     modifier: Modifier,
     state: HomeState,
     onSearchQueryChange: (String) -> Unit = {},
-    onLoadNextPage: () -> Unit = {}
+    onLoadNextPage: () -> Unit = {},
+    onPokemonClick: (Pokemon) -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -69,14 +73,16 @@ fun HomeScreenContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     itemsIndexed(state.pokemonList) { index, pokemon ->
-                        // Verifica se chegou ao fim da lista para carregar mais
                         if (index >= state.pokemonList.size - 1 && !state.isPaginateLoading && !state.endReached) {
                             onLoadNextPage()
                         }
-                        CardPokemon(pokemon = pokemon)
+                        CardPokemon(
+                            pokemon = pokemon,
+                            onClick = { onPokemonClick(pokemon) }
+                        )
                     }
 
-                    // Item de loading no final da lista
+
                     if (state.isPaginateLoading) {
                         item(span = { GridItemSpan(2) }) {
                             Box(
