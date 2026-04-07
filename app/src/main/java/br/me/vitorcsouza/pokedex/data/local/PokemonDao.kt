@@ -12,10 +12,16 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPokemonList(pokemonList: List<PokemonEntity>)
 
-    @Query("SELECT * FROM pokemon")
+    @Query("SELECT * FROM pokemon ORDER BY id ASC")
     fun getAllPokemon(): Flow<List<PokemonEntity>>
 
-    @Query("SELECT * FROM pokemon WHERE name LIKE '%' || :query || '%'")
+    @Query("""
+        SELECT * FROM pokemon 
+        WHERE name LIKE '%' || :query || '%' 
+        OR types LIKE '%' || :query || '%' 
+        OR CAST(id AS TEXT) LIKE '%' || :query || '%'
+        ORDER BY id ASC
+    """)
     fun searchPokemon(query: String): Flow<List<PokemonEntity>>
     
     @Query("DELETE FROM pokemon")
