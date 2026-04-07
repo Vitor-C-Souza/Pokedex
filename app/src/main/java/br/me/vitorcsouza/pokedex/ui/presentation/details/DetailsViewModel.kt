@@ -7,10 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.pokedex.domain.usecase.GetPokemonByNameOrId
+import br.me.vitorcsouza.pokedex.domain.usecase.ToggleFavorite
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
     private val getPokemonByNameOrId: GetPokemonByNameOrId,
+    private val toggleFavoriteUseCase: ToggleFavorite,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(DetailsState())
@@ -38,6 +40,17 @@ class DetailsViewModel(
                     isLoading = false
                 )
             }
+        }
+    }
+
+    fun toggleFavorite() {
+        val pokemon = state.pokemon ?: return
+        viewModelScope.launch {
+            val newFavoriteStatus = !pokemon.isFavorite
+            toggleFavoriteUseCase(pokemon.id, newFavoriteStatus)
+            state = state.copy(
+                pokemon = pokemon.copy(isFavorite = newFavoriteStatus)
+            )
         }
     }
 }

@@ -27,8 +27,7 @@ import org.koin.androidx.compose.koinViewModel
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = koinViewModel(),
-    onBackClick: () -> Unit,
-    onFavoriteClick: () -> Unit
+    onBackClick: () -> Unit
 ) {
     val state = viewModel.state
     state.pokemon?.let {
@@ -37,7 +36,7 @@ fun DetailsScreen(
             pokemon = it,
             modifier = modifier,
             onBackClick = onBackClick,
-            onFavoriteClick = onFavoriteClick
+            onFavoriteClick = { viewModel.toggleFavorite() }
         )
     }
 }
@@ -110,8 +109,8 @@ private fun DetailsScreenPreview() {
             name = "bulbasaur",
             imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
             types = listOf("grass", "poison"),
-            weight = 69,
-            height = 7,
+            weight = 69.0,
+            height = 7.0,
             hp = 45,
             attack = 49,
             defense = 49,

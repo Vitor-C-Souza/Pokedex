@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,9 +94,9 @@ fun DetailsTopBar(
                         .background(Color.White.copy(alpha = 0.15f))
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
+                        imageVector = if (pokemon.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite",
-                        tint = Color.White
+                        tint = if (pokemon.isFavorite) Color.Red else Color.White
                     )
                 }
             }
@@ -149,15 +150,16 @@ private fun DetailsTopBarPreview() {
             name = "bulbasaur",
             imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
             types = listOf("grass", "poison"),
-            weight = 69,
-            height = 7,
+            weight = 69.0,
+            height = 7.0,
             hp = 45,
             attack = 49,
             defense = 49,
             speed = 45,
             specialAttack = 65,
             specialDefense = 65,
-            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back."
+            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back.",
+            isFavorite = true
         ),
         onBackClick = {},
         onFavoriteClick = {}

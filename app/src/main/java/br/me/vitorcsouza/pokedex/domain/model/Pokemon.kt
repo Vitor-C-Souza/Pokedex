@@ -27,8 +27,8 @@ data class Pokemon(
     val id: Int,
     val name: String,
     val imageUrl: String,
-    val height: Int,
-    val weight: Int,
+    val height: Double,
+    val weight: Double,
     val types: List<String>,
     val hp: Int,
     val attack: Int,
@@ -36,7 +36,8 @@ data class Pokemon(
     val specialAttack: Int,
     val specialDefense: Int,
     val speed: Int,
-    val description: String = ""
+    val description: String = "",
+    val isFavorite: Boolean = false
 ) {
     val formattedId: String get() = "#${id.toString().padStart(3, '0')}"
     

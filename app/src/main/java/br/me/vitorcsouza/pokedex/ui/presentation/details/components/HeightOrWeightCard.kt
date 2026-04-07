@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 fun HeightOrWeightCard(
     modifier: Modifier = Modifier,
     title: String,
-    heightOrWeight: Int
+    heightOrWeight: Double
 ) {
     Card(
         modifier = modifier
@@ -51,6 +51,6 @@ fun HeightOrWeightCard(
 private fun HeightOrWeightCardPreview() {
     HeightOrWeightCard(
         title = "Height",
-        heightOrWeight = 7
+        heightOrWeight = 7.0
     )
 }

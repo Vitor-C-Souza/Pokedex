@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
+import br.me.vitorcsouza.pokedex.domain.usecase.GetFavoritePokemon
 import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getAllPokemon: GetAllPokemon,
-    private val searchPokemon: SearchPokemon
+    private val searchPokemon: SearchPokemon,
+    private val getFavoritePokemon: GetFavoritePokemon
 ) : ViewModel() {
     var state by mutableStateOf(HomeState())
         private set
@@ -63,11 +65,22 @@ class HomeViewModel(
         
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(800)
-            
-            if (newQuery.isBlank()) {
+            delay(500)
+
+            val trimmedQuery = newQuery.trim().lowercase()
+
+            if (trimmedQuery.isBlank()) {
                 state = state.copy(page = 0, pokemonList = emptyList(), endReached = false)
                 loadPokemon()
+            } else if (trimmedQuery == "favoritos" || trimmedQuery == "favorites") {
+                state = state.copy(isLoading = true)
+                getFavoritePokemon().collectLatest { results ->
+                    state = state.copy(
+                        pokemonList = results,
+                        isLoading = false,
+                        endReached = true
+                    )
+                }
             } else {
                 state = state.copy(isLoading = true)
                 searchPokemon(newQuery).collectLatest { results ->

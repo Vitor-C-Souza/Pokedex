@@ -6,8 +6,10 @@ import br.me.vitorcsouza.pokedex.data.remote.PokeApi
 import br.me.vitorcsouza.pokedex.data.repository.PokemonRepositoryImpl
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
+import br.me.vitorcsouza.pokedex.domain.usecase.GetFavoritePokemon
 import br.me.vitorcsouza.pokedex.domain.usecase.GetPokemonByNameOrId
 import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
+import br.me.vitorcsouza.pokedex.domain.usecase.ToggleFavorite
 import br.me.vitorcsouza.pokedex.ui.presentation.details.DetailsViewModel
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -45,8 +47,10 @@ val AppModule = module {
     factory { GetAllPokemon(get()) }
     factory { SearchPokemon(get()) }
     factory { GetPokemonByNameOrId(get()) }
+    factory { ToggleFavorite(get()) }
+    factory { GetFavoritePokemon(get()) }
 
     // ViewModels
-    viewModel { HomeViewModel(get(), get()) }
-    viewModel { DetailsViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { DetailsViewModel(get(), get(), get()) }
 }

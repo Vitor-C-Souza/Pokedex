@@ -34,7 +34,8 @@ class PokemonRepositoryImpl(
                         ?.replace("\n", " ")
                         ?.replace("\u000c", " ") ?: ""
 
-                    details.toEntity(description)
+                    val existing = localPokemon.find { it.id == details.id }
+                    details.toEntity(description, isFavorite = existing?.isFavorite ?: false)
                 }
 
                 dao.insertPokemonList(entities)
@@ -61,6 +62,8 @@ class PokemonRepositoryImpl(
 
     override suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon> {
         return try {
+            val localPokemon = dao.getAllPokemon().first()
+            
             // Busca na API (sempre em minúsculo e sem espaços)
             val details = api.getPokemonDetail(nameOrId.lowercase().trim())
             val species = api.getPokemonSpecies(details.id)
@@ -70,7 +73,8 @@ class PokemonRepositoryImpl(
                 ?.replace("\n", " ")
                 ?.replace("\u000c", " ") ?: ""
 
-            val entity = details.toEntity(description)
+            val existing = localPokemon.find { it.id == details.id }
+            val entity = details.toEntity(description, isFavorite = existing?.isFavorite ?: false)
             
             // Salva no banco de dados local
             dao.insertPokemonList(listOf(entity))
@@ -78,6 +82,16 @@ class PokemonRepositoryImpl(
             Result.success(entity.toDomain())
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun toggleFavorite(pokemonId: Int, isFavorite: Boolean) {
+        dao.updateFavoriteStatus(pokemonId, isFavorite)
+    }
+
+    override fun getFavoritePokemon(): Flow<List<Pokemon>> {
+        return dao.getFavoritePokemon().map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }

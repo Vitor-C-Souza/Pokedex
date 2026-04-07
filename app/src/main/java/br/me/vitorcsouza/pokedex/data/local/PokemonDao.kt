@@ -23,7 +23,13 @@ interface PokemonDao {
         ORDER BY id ASC
     """)
     fun searchPokemon(query: String): Flow<List<PokemonEntity>>
-    
+
+    @Query("UPDATE pokemon SET isFavorite = :isFavorite WHERE id = :pokemonId")
+    suspend fun updateFavoriteStatus(pokemonId: Int, isFavorite: Boolean)
+
+    @Query("SELECT * FROM pokemon WHERE isFavorite = 1 ORDER BY id ASC")
+    fun getFavoritePokemon(): Flow<List<PokemonEntity>>
+
     @Query("DELETE FROM pokemon")
     suspend fun clearAll()
 }

@@ -8,9 +8,9 @@ data class PokemonDetailDto(
     @SerializedName("name")
     val name: String,
     @SerializedName("height")
-    val height: Int,
+    val height: Double,
     @SerializedName("weight")
-    val weight: Int,
+    val weight: Double,
     @SerializedName("types")
     val types: List<TypeEntryDto>,
     @SerializedName("stats")

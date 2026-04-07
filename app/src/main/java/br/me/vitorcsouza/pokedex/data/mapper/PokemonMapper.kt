@@ -4,7 +4,10 @@ import br.me.vitorcsouza.pokedex.data.local.entity.PokemonEntity
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonDetailDto
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 
-fun PokemonDetailDto.toEntity(description: String = ""): PokemonEntity {
+fun PokemonDetailDto.toEntity(
+    description: String = "",
+    isFavorite: Boolean = false
+): PokemonEntity {
     val hp = stats.find { it.stat.name == "hp" }?.baseStat ?: 0
     val attack = stats.find { it.stat.name == "attack" }?.baseStat ?: 0
     val defense = stats.find { it.stat.name == "defense" }?.baseStat ?: 0
@@ -16,8 +19,8 @@ fun PokemonDetailDto.toEntity(description: String = ""): PokemonEntity {
         id = id,
         name = name,
         imageUrl = sprites.other?.officialArtwork?.frontDefault ?: "",
-        height = height,
-        weight = weight,
+        height = height / 10.0,
+        weight = weight / 10.0,
         types = types.joinToString(",") { it.type.name },
         hp = hp,
         attack = attack,
@@ -25,7 +28,8 @@ fun PokemonDetailDto.toEntity(description: String = ""): PokemonEntity {
         specialAttack = specialAttack,
         specialDefense = specialDefense,
         speed = speed,
-        description = description
+        description = description,
+        isFavorite = isFavorite
     )
 }
 
@@ -43,6 +47,7 @@ fun PokemonEntity.toDomain(): Pokemon {
         specialAttack = specialAttack,
         specialDefense = specialDefense,
         speed = speed,
-        description = description
+        description = description,
+        isFavorite = isFavorite
     )
 }
