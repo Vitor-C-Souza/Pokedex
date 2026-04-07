@@ -12,6 +12,7 @@ data class PokemonEntity(
     val height: Int,
     val weight: Int,
     val types: String, // Salvaremos como String separada por vírgula (ex: "grass,poison")
+    val description: String = "",
     
     // Base Stats
     val hp: Int,

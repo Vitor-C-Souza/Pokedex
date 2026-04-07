@@ -1,7 +1,16 @@
 package br.me.vitorcsouza.pokedex.ui.presentation.home.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -21,18 +30,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.domain.model.PokemonType
+import br.me.vitorcsouza.pokedex.ui.components.TypeBadge
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
 fun CardPokemon(
+    modifier: Modifier = Modifier,
     pokemon: Pokemon,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit = {},
 ) {
     val primaryType = pokemon.pokemonTypes.firstOrNull() ?: PokemonType.UNKNOWN
     val cardColor = primaryType.color
 
     Card(
+        onClick = onClick,
         modifier = modifier
             .height(220.dp),
         shape = RoundedCornerShape(24.dp),
@@ -103,23 +115,6 @@ fun CardPokemon(
     }
 }
 
-@Composable
-fun TypeBadge(type: PokemonType) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.3f))
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-    ) {
-        Text(
-            text = type.typeName.replaceFirstChar { it.uppercase() },
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-    }
-}
-
 @Preview
 @Composable
 private fun CardPokemonPreview() {
@@ -136,7 +131,8 @@ private fun CardPokemonPreview() {
             defense = 49,
             specialAttack = 65,
             specialDefense = 65,
-            speed = 45
+            speed = 45,
+            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger."
         )
     )
 }
