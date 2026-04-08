@@ -6,6 +6,7 @@ import br.me.vitorcsouza.pokedex.data.mapper.toEntity
 import br.me.vitorcsouza.pokedex.data.remote.PokeApi
 import br.me.vitorcsouza.pokedex.data.remote.dto.ChainLinkDto
 import br.me.vitorcsouza.pokedex.domain.model.EvolutionInfo
+import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.Flow
@@ -95,7 +96,16 @@ class PokemonRepositoryImpl(
             val pokemon = details.toDomain().copy(
                 description = description,
                 isFavorite = existing?.isFavorite ?: false,
-                moves = details.moves.map { it.move.name },
+                moves = details.moves.map {
+                    MoveInfo(
+                        name = it.move.name,
+                        type = "",
+                        description = "",
+                        power = null,
+                        accuracy = null,
+                        pp = null
+                    )
+                },
                 evolutions = evolutions
             )
 

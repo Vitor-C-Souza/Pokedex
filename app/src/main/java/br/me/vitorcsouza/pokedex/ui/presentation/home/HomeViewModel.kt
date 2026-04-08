@@ -21,8 +21,8 @@ class HomeViewModel(
     private val _state = mutableStateOf(HomeState())
     var state: HomeState by mutableStateOf(_state.value)
 
-//    private val _items = MutableStateFlow(emptyList())
-//    val items: StateFlow = _items
+//    private val _state = MutableStateFlow(HomeState())
+//    val state: StateFlow = _state
 
     private val pageSize = 20
     private var searchJob: Job? = null
