@@ -21,6 +21,7 @@ import br.me.vitorcsouza.pokedex.ui.presentation.details.components.AboutPokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.BaseStatesView
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.DetailsTopBar
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.HeightOrWeightCard
+import br.me.vitorcsouza.pokedex.ui.presentation.details.components.MovesView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -32,7 +33,6 @@ fun DetailsScreen(
     val state = viewModel.state
     state.pokemon?.let {
         DetailsScreenContent(
-            state = state,
             pokemon = it,
             modifier = modifier,
             onBackClick = onBackClick,
@@ -44,7 +44,6 @@ fun DetailsScreen(
 @Composable
 fun DetailsScreenContent(
     modifier: Modifier = Modifier,
-    state: DetailsState,
     pokemon: Pokemon,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
@@ -90,6 +89,8 @@ fun DetailsScreenContent(
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+                MovesView(moves = pokemon.moves.orEmpty())
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
         DetailsTopBar(
@@ -107,7 +108,6 @@ fun DetailsScreenContent(
 @Composable
 private fun DetailsScreenPreview() {
     DetailsScreenContent(
-        state = DetailsState(),
         pokemon = Pokemon(
             id = 1,
             name = "bulbasaur",

@@ -24,26 +24,26 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Pokemon(
-    val id: Int,
-    val name: String,
-    val imageUrl: String,
-    val height: Double,
-    val weight: Double,
-    val types: List<String>,
-    val hp: Int,
-    val attack: Int,
-    val defense: Int,
-    val specialAttack: Int,
-    val specialDefense: Int,
-    val speed: Int,
-    val description: String = "",
-    val isFavorite: Boolean = false,
-    val moves: List<MoveInfo> = emptyList(),
-    val evolutions: List<EvolutionInfo> = emptyList()
+    val id: Int? = null,
+    val name: String? = null,
+    val imageUrl: String? = null,
+    val height: Double? = null,
+    val weight: Double? = null,
+    val types: List<String>? = null,
+    val hp: Int? = null,
+    val attack: Int? = null,
+    val defense: Int? = null,
+    val specialAttack: Int? = null,
+    val specialDefense: Int? = null,
+    val speed: Int? = null,
+    val description: String? = null,
+    val isFavorite: Boolean? = false,
+    val moves: List<MoveInfo>? = emptyList(),
+    val evolutions: List<EvolutionInfo>? = emptyList()
 ) {
     val formattedId: String get() = "#${id.toString().padStart(3, '0')}"
 
-    val pokemonTypes: List<PokemonType> get() = types.map { PokemonType.fromString(it) }
+    val pokemonTypes: List<PokemonType> get() = types?.map { PokemonType.fromString(it) }.orEmpty()
 }
 
 @Serializable

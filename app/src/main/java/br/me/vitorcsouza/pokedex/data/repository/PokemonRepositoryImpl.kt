@@ -9,6 +9,9 @@ import br.me.vitorcsouza.pokedex.domain.model.EvolutionInfo
 import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -63,11 +66,11 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon> {
-        return try {
+    override suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon> =
+        coroutineScope {
+            try {
             val localPokemon = dao.getAllPokemon().first()
             
-            // Busca na API (sempre em minúsculo e sem espaços)
             val details = api.getPokemonDetail(nameOrId.lowercase().trim())
             val species = api.getPokemonSpecies(details.id)
             val description = species.flavorTextEntries
@@ -91,21 +94,34 @@ class PokemonRepositoryImpl(
                 addEvolution(ecoChain.chain)
             }
 
+                val moveDetails = details.moves.take(10).map { moveEntry ->
+                    async {
+                        try {
+                            val moveDetail = api.getMoveDetail(moveEntry.move.name)
+                            MoveInfo(
+                                name = moveDetail.name,
+                                type = moveDetail.type.name,
+                                description = moveDetail.flavorTextEntries
+                                    .find { it.language.name == "en" }
+                                    ?.flavorText
+                                    ?.replace("\n", " ")
+                                    ?.replace("\u000c", " ") ?: "",
+                                power = moveDetail.power,
+                                accuracy = moveDetail.accuracy,
+                                pp = moveDetail.pp
+                            )
+                        } catch (e: Exception) {
+                            MoveInfo(name = moveEntry.move.name)
+                        }
+                    }
+                }.awaitAll()
+
             val existing = localPokemon.find { it.id == details.id }
 
             val pokemon = details.toDomain().copy(
                 description = description,
                 isFavorite = existing?.isFavorite ?: false,
-                moves = details.moves.map {
-                    MoveInfo(
-                        name = it.move.name,
-                        type = "",
-                        description = "",
-                        power = null,
-                        accuracy = null,
-                        pp = null
-                    )
-                },
+                moves = moveDetails,
                 evolutions = evolutions
             )
 
