@@ -4,6 +4,8 @@ import br.me.vitorcsouza.pokedex.data.local.PokemonDao
 import br.me.vitorcsouza.pokedex.data.mapper.toDomain
 import br.me.vitorcsouza.pokedex.data.mapper.toEntity
 import br.me.vitorcsouza.pokedex.data.remote.PokeApi
+import br.me.vitorcsouza.pokedex.data.remote.dto.ChainLinkDto
+import br.me.vitorcsouza.pokedex.domain.model.EvolutionInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.Flow
@@ -73,13 +75,31 @@ class PokemonRepositoryImpl(
                 ?.replace("\n", " ")
                 ?.replace("\u000c", " ") ?: ""
 
-            val existing = localPokemon.find { it.id == details.id }
-            val entity = details.toEntity(description, isFavorite = existing?.isFavorite ?: false)
-            
-            // Salva no banco de dados local
-            dao.insertPokemonList(listOf(entity))
+            // Buscar Evoluções
+            val evolutions = mutableListOf<EvolutionInfo>()
+            species.evolutionChain?.url?.let { url ->
+                val ecoChain = api.getEvolutionChain(url)
 
-            Result.success(entity.toDomain())
+                fun addEvolution(chain: ChainLinkDto) {
+                    val id = chain.species.url.split("/").dropLast(1).last()
+                    val imageUrl =
+                        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+                    evolutions.add(EvolutionInfo(chain.species.name, imageUrl))
+                    chain.evolvesTo.forEach { addEvolution(it) }
+                }
+                addEvolution(ecoChain.chain)
+            }
+
+            val existing = localPokemon.find { it.id == details.id }
+
+            val pokemon = details.toDomain().copy(
+                description = description,
+                isFavorite = existing?.isFavorite ?: false,
+                moves = details.moves.map { it.move.name },
+                evolutions = evolutions
+            )
+
+            Result.success(pokemon)
         } catch (e: Exception) {
             Result.failure(e)
         }

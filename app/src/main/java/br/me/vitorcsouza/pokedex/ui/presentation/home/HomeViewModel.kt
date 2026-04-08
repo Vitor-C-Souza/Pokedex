@@ -18,8 +18,11 @@ class HomeViewModel(
     private val searchPokemon: SearchPokemon,
     private val getFavoritePokemon: GetFavoritePokemon
 ) : ViewModel() {
-    var state by mutableStateOf(HomeState())
-        private set
+    private val _state = mutableStateOf(HomeState())
+    var state: HomeState by mutableStateOf(_state.value)
+
+//    private val _items = MutableStateFlow(emptyList())
+//    val items: StateFlow = _items
 
     private val pageSize = 20
     private var searchJob: Job? = null

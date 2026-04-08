@@ -94,9 +94,9 @@ fun DetailsTopBar(
                         .background(Color.White.copy(alpha = 0.15f))
                 ) {
                     Icon(
-                        imageVector = if (pokemon.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (pokemon.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite",
-                        tint = if (pokemon.isFavorite) Color.Red else Color.White
+                        tint = if (pokemon.isFavorite == true) Color.Red else Color.White
                     )
                 }
             }
@@ -113,7 +113,7 @@ fun DetailsTopBar(
                 )
 
                 Text(
-                    text = pokemon.name.replaceFirstChar { it.uppercase() },
+                    text = pokemon.name?.replaceFirstChar { it.uppercase() }.orEmpty(),
                     style = MaterialTheme.typography.headlineLarge,
                     color = Color.White,
                     fontWeight = FontWeight.Bold

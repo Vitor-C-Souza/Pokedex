@@ -16,7 +16,19 @@ data class PokemonDetailDto(
     @SerializedName("stats")
     val stats: List<StatEntryDto>,
     @SerializedName("sprites")
-    val sprites: SpritesDto
+    val sprites: SpritesDto,
+    @SerializedName("moves")
+    val moves: List<MoveEntryDto>
+)
+
+data class MoveEntryDto(
+    @SerializedName("move")
+    val move: MoveDto
+)
+
+data class MoveDto(
+    @SerializedName("name")
+    val name: String
 )
 
 data class TypeEntryDto(

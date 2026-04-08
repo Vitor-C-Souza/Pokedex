@@ -79,7 +79,7 @@ fun CardPokemon(
                     )
                     // Name
                     Text(
-                        text = pokemon.name.replaceFirstChar { it.uppercase() },
+                        text = pokemon.name?.replaceFirstChar { it.uppercase() }.orEmpty(),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp

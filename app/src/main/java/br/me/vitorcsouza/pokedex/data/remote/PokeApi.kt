@@ -1,11 +1,13 @@
 package br.me.vitorcsouza.pokedex.data.remote
 
+import br.me.vitorcsouza.pokedex.data.remote.dto.EvolutionChainDto
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonDetailDto
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonResponseDto
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonSpeciesDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface PokeApi {
     @GET("pokemon")
@@ -23,6 +25,11 @@ interface PokeApi {
     suspend fun getPokemonSpecies(
         @Path("id") id: Int
     ): PokemonSpeciesDto
+
+    @GET
+    suspend fun getEvolutionChain(
+        @Url url: String
+    ): EvolutionChainDto
 
     companion object {
         const val BASE_URL = "https://pokeapi.co/api/v2/"

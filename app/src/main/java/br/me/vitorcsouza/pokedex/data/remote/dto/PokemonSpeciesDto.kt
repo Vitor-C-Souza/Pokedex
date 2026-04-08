@@ -4,7 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 data class PokemonSpeciesDto(
     @SerializedName("flavor_text_entries")
-    val flavorTextEntries: List<FlavorTextEntryDto>
+    val flavorTextEntries: List<FlavorTextEntryDto>,
+    @SerializedName("evolution_chain")
+    val evolutionChain: EvolutionChainUrlDto?
+)
+
+data class EvolutionChainUrlDto(
+    @SerializedName("url")
+    val url: String
 )
 
 data class FlavorTextEntryDto(

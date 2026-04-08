@@ -41,12 +41,24 @@ fun BaseStatesView(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
-        StatsUnique(title = "HP", value = pokemon.hp, barColor = cardColor)
-        StatsUnique(title = "Attack", value = pokemon.attack, barColor = cardColor)
-        StatsUnique(title = "Defense", value = pokemon.defense, barColor = cardColor)
-        StatsUnique(title = "Special Attack", value = pokemon.specialAttack, barColor = cardColor)
-        StatsUnique(title = "Special Defense", value = pokemon.specialDefense, barColor = cardColor)
-        StatsUnique(title = "Speed", value = pokemon.speed, barColor = cardColor)
+        pokemon.hp?.let { StatsUnique(title = "HP", value = it, barColor = cardColor) }
+        pokemon.attack?.let { StatsUnique(title = "Attack", value = it, barColor = cardColor) }
+        pokemon.defense?.let { StatsUnique(title = "Defense", value = it, barColor = cardColor) }
+        pokemon.specialAttack?.let {
+            StatsUnique(
+                title = "Special Attack",
+                value = it,
+                barColor = cardColor
+            )
+        }
+        pokemon.specialDefense?.let {
+            StatsUnique(
+                title = "Special Defense",
+                value = it,
+                barColor = cardColor
+            )
+        }
+        pokemon.speed?.let { StatsUnique(title = "Speed", value = it, barColor = cardColor) }
     }
 }
 

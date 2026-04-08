@@ -46,8 +46,8 @@ class DetailsViewModel(
     fun toggleFavorite() {
         val pokemon = state.pokemon ?: return
         viewModelScope.launch {
-            val newFavoriteStatus = !pokemon.isFavorite
-            toggleFavoriteUseCase(pokemon.id, newFavoriteStatus)
+            val newFavoriteStatus = !pokemon.isFavorite!!
+            pokemon.id?.let { toggleFavoriteUseCase(it, newFavoriteStatus) }
             state = state.copy(
                 pokemon = pokemon.copy(isFavorite = newFavoriteStatus)
             )

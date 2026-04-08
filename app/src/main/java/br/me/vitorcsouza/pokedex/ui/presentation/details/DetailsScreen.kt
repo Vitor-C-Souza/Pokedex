@@ -74,16 +74,20 @@ fun DetailsScreenContent(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    HeightOrWeightCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Height",
-                        heightOrWeight = pokemon.height
-                    )
-                    HeightOrWeightCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Weight",
-                        heightOrWeight = pokemon.weight
-                    )
+                    pokemon.height?.let {
+                        HeightOrWeightCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Height",
+                            heightOrWeight = it
+                        )
+                    }
+                    pokemon.weight?.let {
+                        HeightOrWeightCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Weight",
+                            heightOrWeight = it
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

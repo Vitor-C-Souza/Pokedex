@@ -38,11 +38,13 @@ fun AboutPokemonView(
                 fontWeight = FontWeight.Bold
             )
 
-            Text(
-                text = pokemon.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
+            pokemon.description?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
