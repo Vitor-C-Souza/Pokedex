@@ -8,13 +8,18 @@ import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.details.DetailsScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.splash.SplashScreen
+import kotlinx.serialization.Serializable
 
-sealed class Screen(val route: String) {
-    object Splash : Screen("splash")
-    object Home : Screen("home")
-    object Details : Screen("details/{pokemonName}") {
-        fun createRoute(pokemonName: String) = "details/$pokemonName"
-    }
+@Serializable
+sealed class Screen {
+    @Serializable
+    object Splash : Screen()
+
+    @Serializable
+    object Home : Screen()
+
+    @Serializable
+    data class Details(val pokemonName: String) : Screen()
 }
 
 
@@ -23,27 +28,33 @@ fun NavGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.Splash
     ) {
-        composable(Screen.Splash.route) {
+        composable<Screen.Splash> {
             SplashScreen(
                 onFinished = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    navController.navigate(Screen.Home) {
+                        popUpTo(Screen.Splash) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(Screen.Home.route) {
+        composable<Screen.Home> {
             HomeScreen(
                 onPokemonClick = { pokemon: Pokemon ->
-                    navController.navigate(Screen.Details.createRoute(pokemon.name))
+                    pokemon.name?.let { pokemonName ->
+                        navController.navigate(
+                            Screen.Details(
+                                pokemonName = pokemonName
+                            )
+                        )
+                    }
                 }
             )
         }
 
-        composable(Screen.Details.route) {
+        composable<Screen.Details> {
             DetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
