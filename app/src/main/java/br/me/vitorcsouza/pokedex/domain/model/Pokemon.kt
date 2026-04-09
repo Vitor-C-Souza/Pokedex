@@ -49,7 +49,8 @@ data class Pokemon(
 @Serializable
 data class EvolutionInfo(
     val name: String? = null,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    val condition: String? = null
 )
 
 @Serializable

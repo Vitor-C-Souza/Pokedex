@@ -13,13 +13,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import br.me.vitorcsouza.pokedex.domain.model.EvolutionInfo
+import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.AboutPokemonView
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.BaseStatesView
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.DetailsTopBar
+import br.me.vitorcsouza.pokedex.ui.presentation.details.components.EvolutionView
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.HeightOrWeightCard
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.MovesView
 import org.koin.androidx.compose.koinViewModel
@@ -49,6 +53,7 @@ fun DetailsScreenContent(
     onFavoriteClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    val cardColor = pokemon.pokemonTypes.firstOrNull()?.color ?: Color.LightGray
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -88,8 +93,12 @@ fun DetailsScreenContent(
                         )
                     }
                 }
+                MovesView(moves = pokemon.moves.orEmpty().take(10))
                 Spacer(modifier = Modifier.height(16.dp))
-                MovesView(moves = pokemon.moves.orEmpty())
+                EvolutionView(
+                    evolutions = pokemon.evolutions.orEmpty(),
+                    cardColor = cardColor
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -121,7 +130,36 @@ private fun DetailsScreenPreview() {
             specialAttack = 65,
             specialDefense = 65,
             speed = 45,
-            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger."
+            description = "Bulbasaur can be seen napping in bright sunlight. There is a seed on its back. By soaking up the sun's rays, the seed grows progressively larger.",
+            isFavorite = true,
+            moves = listOf(
+                MoveInfo(
+                    name = "Tackle",
+                    type = "normal",
+                    description = "Does a quick, low-power punch",
+                    power = 40,
+                    accuracy = 100,
+                    pp = 35
+                ),
+                MoveInfo(
+                    name = "Vine Whip",
+                    type = "grass",
+                    description = "Strikes the target with slender, whiplike vines",
+                    power = 45,
+                    accuracy = 100,
+                    pp = 25
+                )
+            ),
+            evolutions = listOf(
+                EvolutionInfo(
+                    name = "Ivysaur",
+                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
+                ),
+                EvolutionInfo(
+                    name = "Venusaur",
+                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"
+                )
+            )
         ),
         onBackClick = {},
         onFavoriteClick = {}

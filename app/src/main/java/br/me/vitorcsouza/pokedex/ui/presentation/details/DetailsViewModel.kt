@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class DetailsViewModel(
     private val getPokemonByNameOrId: GetPokemonByNameOrId,
     private val toggleFavoriteUseCase: ToggleFavorite,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(DetailsState())
         private set

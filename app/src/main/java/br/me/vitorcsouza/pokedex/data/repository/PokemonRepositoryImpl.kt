@@ -15,6 +15,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 
 class PokemonRepositoryImpl(
     private val api: PokeApi,
@@ -69,30 +70,56 @@ class PokemonRepositoryImpl(
     override suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon> =
         coroutineScope {
             try {
-            val localPokemon = dao.getAllPokemon().first()
-            
-            val details = api.getPokemonDetail(nameOrId.lowercase().trim())
-            val species = api.getPokemonSpecies(details.id)
-            val description = species.flavorTextEntries
-                .find { it.language.name == "en" }
-                ?.flavorText
-                ?.replace("\n", " ")
-                ?.replace("\u000c", " ") ?: ""
+                val localPokemon = dao.getAllPokemon().first()
 
-            // Buscar Evoluções
-            val evolutions = mutableListOf<EvolutionInfo>()
-            species.evolutionChain?.url?.let { url ->
-                val ecoChain = api.getEvolutionChain(url)
+                val details = api.getPokemonDetail(nameOrId.lowercase().trim())
+                val species = api.getPokemonSpecies(details.id)
+                val description = species.flavorTextEntries
+                    .find { it.language.name == "en" }
+                    ?.flavorText
+                    ?.replace("\n", " ")
+                    ?.replace("\u000c", " ") ?: ""
 
-                fun addEvolution(chain: ChainLinkDto) {
-                    val id = chain.species.url.split("/").dropLast(1).last()
-                    val imageUrl =
-                        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
-                    evolutions.add(EvolutionInfo(chain.species.name, imageUrl))
-                    chain.evolvesTo.forEach { addEvolution(it) }
+                // Buscar Evoluções
+                val evolutions = mutableListOf<EvolutionInfo>()
+                species.evolutionChain?.url?.let { url ->
+                    val ecoChain = api.getEvolutionChain(url)
+
+                    fun addEvolution(chain: ChainLinkDto) {
+                        val id = chain.species.url.split("/").dropLast(1).last()
+                        val imageUrl =
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+
+                        val detail = chain.evolutionDetails.firstOrNull()
+                        val condition = when {
+                            detail?.minLevel != null -> "Level ${detail.minLevel}"
+                            detail?.item != null -> detail.item.name.replace("-", " ")
+                                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+
+                            detail?.minHappiness != null -> "Happiness"
+                            detail?.trigger?.name == "trade" -> "Trade"
+                            detail?.knownMove != null -> "Knows ${
+                                detail.knownMove.name.replace(
+                                    "-",
+                                    " "
+                                )
+                            }"
+
+                            detail?.location != null -> "Location: ${
+                                detail.location.name.replace(
+                                    "-",
+                                    " "
+                                )
+                            }"
+
+                            else -> null
+                        }
+
+                        evolutions.add(EvolutionInfo(chain.species.name, imageUrl, condition))
+                        chain.evolvesTo.forEach { addEvolution(it) }
+                    }
+                    addEvolution(ecoChain.chain)
                 }
-                addEvolution(ecoChain.chain)
-            }
 
                 val moveDetails = details.moves.take(10).map { moveEntry ->
                     async {
@@ -116,20 +143,20 @@ class PokemonRepositoryImpl(
                     }
                 }.awaitAll()
 
-            val existing = localPokemon.find { it.id == details.id }
+                val existing = localPokemon.find { it.id == details.id }
 
-            val pokemon = details.toDomain().copy(
-                description = description,
-                isFavorite = existing?.isFavorite ?: false,
-                moves = moveDetails,
-                evolutions = evolutions
-            )
+                val pokemon = details.toDomain().copy(
+                    description = description,
+                    isFavorite = existing?.isFavorite ?: false,
+                    moves = moveDetails,
+                    evolutions = evolutions
+                )
 
-            Result.success(pokemon)
-        } catch (e: Exception) {
-            Result.failure(e)
+                Result.success(pokemon)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
-    }
 
     override suspend fun toggleFavorite(pokemonId: Int, isFavorite: Boolean) {
         dao.updateFavoriteStatus(pokemonId, isFavorite)
