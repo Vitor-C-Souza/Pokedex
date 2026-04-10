@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.ui.presentation.details.components.MoveItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -41,7 +42,7 @@ fun AllMovesScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredMoves = remember(searchQuery, moves) {
-        if (searchQuery.isBlank()) {
+        val result = if (searchQuery.isBlank()) {
             moves
         } else {
             moves.filter { move ->
@@ -49,6 +50,12 @@ fun AllMovesScreen(
                         move.type?.contains(searchQuery, ignoreCase = true) == true
             }
         }
+
+        result.sortedWith(
+            compareByDescending<MoveInfo> { it.learnMethod == "level-up" }
+                .thenBy { it.levelLearnedAt ?: Int.MAX_VALUE }
+                .thenBy { it.name }
+        )
     }
 
     Scaffold(

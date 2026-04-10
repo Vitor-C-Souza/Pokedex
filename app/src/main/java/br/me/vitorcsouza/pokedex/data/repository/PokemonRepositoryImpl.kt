@@ -123,6 +123,10 @@ class PokemonRepositoryImpl(
 
                 val moveDetails = details.moves.map { moveEntry ->
                     async {
+                        val latestVersionDetail = moveEntry.versionGroupDetails.lastOrNull()
+                        val learnMethod = latestVersionDetail?.moveLearnMethod?.name
+                        val levelLearnedAt = latestVersionDetail?.levelLearnedAt
+
                         try {
                             val moveDetail = api.getMoveDetail(moveEntry.move.name)
                             MoveInfo(
@@ -135,10 +139,16 @@ class PokemonRepositoryImpl(
                                     ?.replace("\u000c", " ") ?: "",
                                 power = moveDetail.power,
                                 accuracy = moveDetail.accuracy,
-                                pp = moveDetail.pp
+                                pp = moveDetail.pp,
+                                learnMethod = learnMethod,
+                                levelLearnedAt = levelLearnedAt
                             )
                         } catch (e: Exception) {
-                            MoveInfo(name = moveEntry.move.name)
+                            MoveInfo(
+                                name = moveEntry.move.name,
+                                learnMethod = learnMethod,
+                                levelLearnedAt = levelLearnedAt
+                            )
                         }
                     }
                 }.awaitAll()

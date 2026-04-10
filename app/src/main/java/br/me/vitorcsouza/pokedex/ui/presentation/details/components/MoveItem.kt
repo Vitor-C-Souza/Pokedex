@@ -15,13 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.PokemonType
 import br.me.vitorcsouza.pokedex.ui.components.TypeBadge
+import java.util.Locale
 
 @Composable
 fun MoveItem(move: MoveInfo = MoveInfo()) {
@@ -32,8 +32,7 @@ fun MoveItem(move: MoveInfo = MoveInfo()) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .background(Color.Transparent),
+            .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(2.dp, cardColor),
     ) {
@@ -49,7 +48,9 @@ fun MoveItem(move: MoveInfo = MoveInfo()) {
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = move.name?.replace("-", " ") ?: "Unknown",
+                    text = move.name?.replace("-", " ")
+                        ?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                        ?: "Unknown",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -62,11 +63,29 @@ fun MoveItem(move: MoveInfo = MoveInfo()) {
                         .background(cardColor)
                 )
             }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val learnMethod =
+                    move.learnMethod?.replace("-", " ")?.replaceFirstChar { it.uppercase() }
+                        ?: "N/A"
+                val level =
+                    if (move.levelLearnedAt != null && move.levelLearnedAt > 0) " (Lv. ${move.levelLearnedAt})" else ""
+
+                Text(
+                    text = "Method: $learnMethod$level",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Text(
                 text = move.description ?: "No description available",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 4.dp)
             )
 
             Row(
@@ -112,7 +131,7 @@ fun DetailsMove(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
         Text(
-            text = info + if (info != "N/A") posfixo else "",
+            text = info + if (info != "N/A" && info.isNotEmpty()) posfixo else "",
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold
         )
@@ -124,13 +143,14 @@ fun DetailsMove(
 private fun MoveItemPreview() {
     MoveItem(
         move = MoveInfo(
-            name = "Tackle",
+            name = "tackle",
             type = "normal",
             description = "Does a quick, low-power punch",
             power = 40,
             accuracy = 100,
-            pp = 35
+            pp = 35,
+            learnMethod = "level-up",
+            levelLearnedAt = 1
         )
     )
 }
-

@@ -60,7 +60,9 @@ data class MoveInfo(
     val description: String? = null,
     val power: Int? = null,
     val accuracy: Int? = null,
-    val pp: Int? = null
+    val pp: Int? = null,
+    val learnMethod: String? = null,
+    val levelLearnedAt: Int? = null
 )
 
 enum class PokemonType(val typeName: String, val color: Color) {

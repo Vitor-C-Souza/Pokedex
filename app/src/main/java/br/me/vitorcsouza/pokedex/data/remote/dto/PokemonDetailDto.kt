@@ -23,7 +23,28 @@ data class PokemonDetailDto(
 
 data class MoveEntryDto(
     @SerializedName("move")
-    val move: MoveDto
+    val move: MoveDto,
+    @SerializedName("version_group_details")
+    val versionGroupDetails: List<VersionGroupDetailDto>
+)
+
+data class VersionGroupDetailDto(
+    @SerializedName("level_learned_at")
+    val levelLearnedAt: Int,
+    @SerializedName("move_learn_method")
+    val moveLearnMethod: MoveLearnMethodDto,
+    @SerializedName("version_group")
+    val versionGroup: VersionGroupDto
+)
+
+data class MoveLearnMethodDto(
+    @SerializedName("name")
+    val name: String
+)
+
+data class VersionGroupDto(
+    @SerializedName("name")
+    val name: String
 )
 
 data class MoveDto(

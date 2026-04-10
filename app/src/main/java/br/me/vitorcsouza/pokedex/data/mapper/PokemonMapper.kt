@@ -2,6 +2,7 @@ package br.me.vitorcsouza.pokedex.data.mapper
 
 import br.me.vitorcsouza.pokedex.data.local.entity.PokemonEntity
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonDetailDto
+import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
 
 fun PokemonDetailDto.toEntity(
@@ -60,6 +61,15 @@ fun PokemonDetailDto.toDomain(): Pokemon {
     val specialDefense = stats.find { it.stat.name == "special-defense" }?.baseStat ?: 0
     val speed = stats.find { it.stat.name == "speed" }?.baseStat ?: 0
 
+    val movesDomain = moves.map { moveEntry ->
+        val latestVersionDetail = moveEntry.versionGroupDetails.lastOrNull()
+        MoveInfo(
+            name = moveEntry.move.name,
+            learnMethod = latestVersionDetail?.moveLearnMethod?.name,
+            levelLearnedAt = latestVersionDetail?.levelLearnedAt
+        )
+    }
+
     return Pokemon(
         id = id,
         name = name,
@@ -72,6 +82,7 @@ fun PokemonDetailDto.toDomain(): Pokemon {
         defense = defense,
         specialAttack = specialAttack,
         specialDefense = specialDefense,
-        speed = speed
+        speed = speed,
+        moves = movesDomain
     )
 }
