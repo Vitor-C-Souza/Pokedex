@@ -20,6 +20,12 @@ Android, seguindo os princípios de Clean Architecture e as melhores práticas d
     3. Nome (ordem alfabética).
 - **Busca de Movimentos:** Filtre os golpes por nome ou tipo.
 
+## 📸 Showcase
+
+<div align="center">
+  <img src="screenshots/showcase.png" alt="Pokedex Showcase" width="800">
+</div>
+
 ## 🛠️ Tecnologias e Bibliotecas
 
 - **[Kotlin](https://kotlinlang.org/):** Linguagem principal.
@@ -44,10 +50,6 @@ O projeto está estruturado em três camadas principais:
 1. **Data:** Implementação de repositórios, fontes de dados (API e Banco de Dados) e Mappers.
 2. **Domain:** Regras de negócio, modelos de domínio e Use Cases.
 3. **UI (Presentation):** Componentes Compose, ViewModels e gerenciamento de estado.
-
-## 📸 Screenshots
-
-*(Espaço reservado para adicionar imagens do projeto)*
 
 ## ⚙️ Como executar o projeto
 
