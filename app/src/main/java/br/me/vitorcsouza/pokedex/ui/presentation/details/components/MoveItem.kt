@@ -49,7 +49,7 @@ fun MoveItem(move: MoveInfo = MoveInfo()) {
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = move.name ?: "Unknown",
+                    text = move.name?.replace("-", " ") ?: "Unknown",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -112,7 +112,7 @@ fun DetailsMove(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
         Text(
-            text = info + posfixo,
+            text = info + if (info != "N/A") posfixo else "",
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold
         )

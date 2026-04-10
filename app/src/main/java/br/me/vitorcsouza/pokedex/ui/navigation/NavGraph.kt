@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
+import br.me.vitorcsouza.pokedex.ui.presentation.details.AllMovesScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.details.DetailsScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeScreen
 import br.me.vitorcsouza.pokedex.ui.presentation.splash.SplashScreen
@@ -20,6 +21,9 @@ sealed class Screen {
 
     @Serializable
     data class Details(val pokemonName: String) : Screen()
+
+    @Serializable
+    data class AllMoves(val pokemonName: String) : Screen()
 }
 
 
@@ -58,9 +62,19 @@ fun NavGraph(navController: NavHostController) {
             DetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onSeeAllMovesClick = { pokemonName ->
+                    navController.navigate(Screen.AllMoves(pokemonName))
+                }
+            )
+        }
+
+        composable<Screen.AllMoves> {
+            AllMovesScreen(
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
     }
 }
-

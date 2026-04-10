@@ -32,7 +32,8 @@ import org.koin.androidx.compose.koinViewModel
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = koinViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSeeAllMovesClick: (String) -> Unit
 ) {
     val state = viewModel.state
     state.pokemon?.let {
@@ -40,7 +41,8 @@ fun DetailsScreen(
             pokemon = it,
             modifier = modifier,
             onBackClick = onBackClick,
-            onFavoriteClick = { viewModel.toggleFavorite() }
+            onFavoriteClick = { viewModel.toggleFavorite() },
+            onSeeAllMovesClick = { onSeeAllMovesClick(it.name.orEmpty()) }
         )
     }
 }
@@ -51,6 +53,7 @@ fun DetailsScreenContent(
     pokemon: Pokemon,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
+    onSeeAllMovesClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val cardColor = pokemon.pokemonTypes.firstOrNull()?.color ?: Color.LightGray
@@ -93,7 +96,10 @@ fun DetailsScreenContent(
                         )
                     }
                 }
-                MovesView(moves = pokemon.moves.orEmpty().take(10))
+                MovesView(
+                    moves = pokemon.moves.orEmpty().take(10),
+                    onSeeAllClick = onSeeAllMovesClick
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 EvolutionView(
                     evolutions = pokemon.evolutions.orEmpty(),
@@ -162,6 +168,7 @@ private fun DetailsScreenPreview() {
             )
         ),
         onBackClick = {},
-        onFavoriteClick = {}
+        onFavoriteClick = {},
+        onSeeAllMovesClick = {}
     )
 }

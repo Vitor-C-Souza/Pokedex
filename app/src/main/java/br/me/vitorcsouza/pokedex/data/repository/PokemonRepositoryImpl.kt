@@ -121,7 +121,7 @@ class PokemonRepositoryImpl(
                     addEvolution(ecoChain.chain)
                 }
 
-                val moveDetails = details.moves.take(10).map { moveEntry ->
+                val moveDetails = details.moves.map { moveEntry ->
                     async {
                         try {
                             val moveDetail = api.getMoveDetail(moveEntry.move.name)
