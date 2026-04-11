@@ -1,8 +1,5 @@
 package br.me.vitorcsouza.pokedex.ui.presentation.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.pokedex.domain.usecase.GetAllPokemon
@@ -10,7 +7,11 @@ import br.me.vitorcsouza.pokedex.domain.usecase.GetFavoritePokemon
 import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -18,11 +19,8 @@ class HomeViewModel(
     private val searchPokemon: SearchPokemon,
     private val getFavoritePokemon: GetFavoritePokemon
 ) : ViewModel() {
-    private val _state = mutableStateOf(HomeState())
-    var state: HomeState by mutableStateOf(_state.value)
-
-//    private val _state = MutableStateFlow(HomeState())
-//    val state: StateFlow = _state
+    private val _state = MutableStateFlow(HomeState())
+    val state: StateFlow<HomeState> = _state.asStateFlow()
 
     private val pageSize = 20
     private var searchJob: Job? = null
@@ -32,39 +30,46 @@ class HomeViewModel(
     }
 
     fun loadPokemon() {
-        if (state.isPaginateLoading || state.endReached || state.searchQuery.isNotBlank()) return
+        val currentState = _state.value
+        if (currentState.isPaginateLoading || currentState.endReached || currentState.searchQuery.isNotBlank()) return
 
         viewModelScope.launch {
-            state = state.copy(
-                isPaginateLoading = true,
-                isLoading = state.pokemonList.isEmpty()
-            )
-            
-            val offset = state.page * pageSize
+            _state.update {
+                it.copy(
+                    isPaginateLoading = true,
+                    isLoading = it.pokemonList.isEmpty()
+                )
+            }
+
+            val offset = _state.value.page * pageSize
             
             getAllPokemon(pageSize, offset)
                 .onSuccess { newList ->
-                    state = state.copy(
-                        pokemonList = state.pokemonList + newList,
-                        isLoading = false,
-                        isPaginateLoading = false,
-                        endReached = newList.isEmpty(),
-                        page = state.page + 1,
-                        error = null
-                    )
+                    _state.update {
+                        it.copy(
+                            pokemonList = it.pokemonList + newList,
+                            isLoading = false,
+                            isPaginateLoading = false,
+                            endReached = newList.isEmpty(),
+                            page = it.page + 1,
+                            error = null
+                        )
+                    }
                 }
-                .onFailure {
-                    state = state.copy(
-                        error = it.message,
-                        isLoading = false,
-                        isPaginateLoading = false
-                    )
+                .onFailure { error ->
+                    _state.update {
+                        it.copy(
+                            error = error.message,
+                            isLoading = false,
+                            isPaginateLoading = false
+                        )
+                    }
                 }
         }
     }
 
     fun onSearchQueryChange(newQuery: String) {
-        state = state.copy(searchQuery = newQuery)
+        _state.update { it.copy(searchQuery = newQuery) }
         
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
@@ -73,25 +78,29 @@ class HomeViewModel(
             val trimmedQuery = newQuery.trim().lowercase()
 
             if (trimmedQuery.isBlank()) {
-                state = state.copy(page = 0, pokemonList = emptyList(), endReached = false)
+                _state.update { it.copy(page = 0, pokemonList = emptyList(), endReached = false) }
                 loadPokemon()
             } else if (trimmedQuery == "favoritos" || trimmedQuery == "favorites") {
-                state = state.copy(isLoading = true)
+                _state.update { it.copy(isLoading = true) }
                 getFavoritePokemon().collectLatest { results ->
-                    state = state.copy(
-                        pokemonList = results,
-                        isLoading = false,
-                        endReached = true
-                    )
+                    _state.update {
+                        it.copy(
+                            pokemonList = results,
+                            isLoading = false,
+                            endReached = true
+                        )
+                    }
                 }
             } else {
-                state = state.copy(isLoading = true)
+                _state.update { it.copy(isLoading = true) }
                 searchPokemon(newQuery).collectLatest { results ->
-                    state = state.copy(
-                        pokemonList = results,
-                        isLoading = false,
-                        endReached = true
-                    )
+                    _state.update {
+                        it.copy(
+                            pokemonList = results,
+                            isLoading = false,
+                            endReached = true
+                        )
+                    }
                 }
             }
         }

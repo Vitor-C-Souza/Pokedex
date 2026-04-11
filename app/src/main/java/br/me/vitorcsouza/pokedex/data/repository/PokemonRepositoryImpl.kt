@@ -162,6 +162,10 @@ class PokemonRepositoryImpl(
                     evolutions = evolutions
                 )
 
+                val entity =
+                    details.toEntity(description, isFavorite = existing?.isFavorite ?: false)
+                dao.insertPokemonList(listOf(entity))
+
                 Result.success(pokemon)
             } catch (e: Exception) {
                 Result.failure(e)
