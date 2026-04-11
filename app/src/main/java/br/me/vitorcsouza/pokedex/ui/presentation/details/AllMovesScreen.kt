@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,8 +37,8 @@ fun AllMovesScreen(
     onBackClick: () -> Unit,
     viewModel: DetailsViewModel = koinViewModel()
 ) {
-    val state = viewModel.state
-    val moves = state.pokemon?.moves.orEmpty()
+    val state = viewModel.state.collectAsState()
+    val moves = state.value.pokemon?.moves.orEmpty()
 
     var searchQuery by remember { mutableStateOf("") }
 

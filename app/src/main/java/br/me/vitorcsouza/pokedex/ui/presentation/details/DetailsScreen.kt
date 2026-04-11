@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +37,8 @@ fun DetailsScreen(
     onBackClick: () -> Unit,
     onSeeAllMovesClick: (String) -> Unit
 ) {
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
+
     state.pokemon?.let {
         DetailsScreenContent(
             pokemon = it,
