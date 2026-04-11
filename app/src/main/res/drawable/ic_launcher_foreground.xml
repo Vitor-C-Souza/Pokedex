@@ -8,35 +8,34 @@
     <!-- Pokéball Outer White Container -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,54m-35,0a35,35 0,1,1 70,0a35,35 0,1,1 -70,0" />
+        android:pathData="M54,54m-28,0a28,28 0,1,1 56,0a28,28 0,1,1 -56,0" />
 
     <!-- Pokéball Inner Circle (Red Border) -->
     <path
-        android:strokeWidth="6"
+        android:pathData="M54,54m-24,0a24,24 0,1,1 48,0a24,24 0,1,1 -48,0"
         android:strokeColor="#DC2626"
-        android:pathData="M54,54m-30,0a30,30 0,1,1 60,0a30,30 0,1,1 -60,0" />
+        android:strokeWidth="5" />
 
-    <!-- Clip Group for Top/Bottom half -->
     <!-- Top Half (Red) -->
     <path
         android:fillColor="#DC2626"
-        android:pathData="M24,54a30,30 0,0,1 60,0L54,54Z" />
+        android:pathData="M30,54a24,24 0,0,1 48,0L54,54Z" />
 
     <!-- Middle Horizontal Line -->
     <path
         android:fillColor="#111827"
-        android:pathData="M24,52h60v4h-60z" />
+        android:pathData="M30,52.5h48v3h-48z" />
 
     <!-- Center Button (White Circle) -->
     <path
         android:fillColor="#FFFFFF"
-        android:strokeWidth="3"
+        android:pathData="M54,54m-8,0a8,8 0,1,1 16,0a8,8 0,1,1 -16,0"
         android:strokeColor="#111827"
-        android:pathData="M54,54m-10,0a10,10 0,1,1 20,0a10,10 0,1,1 -20,0" />
+        android:strokeWidth="2.5" />
 
     <!-- Center Button Dot -->
     <path
         android:fillColor="#111827"
-        android:pathData="M54,54m-4,0a4,4 0,1,1 8,0a4,4 0,1,1 -8,0" />
+        android:pathData="M54,54m-3,0a3,3 0,1,1 6,0a3,3 0,1,1 -6,0" />
 
 </vector>
