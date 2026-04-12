@@ -12,7 +12,9 @@ import br.me.vitorcsouza.pokedex.domain.usecase.SearchPokemon
 import br.me.vitorcsouza.pokedex.domain.usecase.ToggleFavorite
 import br.me.vitorcsouza.pokedex.ui.presentation.details.DetailsViewModel
 import br.me.vitorcsouza.pokedex.ui.presentation.home.HomeViewModel
+import br.me.vitorcsouza.pokedex.worker.PokemonSyncWorker
 import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -49,6 +51,10 @@ val AppModule = module {
     factory { GetPokemonByNameOrId(get()) }
     factory { ToggleFavorite(get()) }
     factory { GetFavoritePokemon(get()) }
+
+    // Worker
+    worker { PokemonSyncWorker(get(), get(), get()) }
+
 
     // ViewModels
     viewModel { HomeViewModel(get(), get(), get()) }

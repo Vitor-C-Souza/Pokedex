@@ -181,4 +181,40 @@ class PokemonRepositoryImpl(
             entities.map { it.toDomain() }
         }
     }
+
+    override suspend fun syncAllPokemons(limit: Int) {
+        coroutineScope {
+            try {
+                val localCount = dao.getPokemonCount()
+                val response = api.getPokemonList(limit, localCount)
+
+                response.results.chunked(20).forEach { batch ->
+                    coroutineScope {
+                        val entities = batch.map { basic ->
+                            async {
+                                try {
+                                    val details = api.getPokemonDetail(basic.name)
+                                    val species = api.getPokemonSpecies(details.id)
+                                    val description = species.flavorTextEntries
+                                        .find { it.language.name == "en" }
+                                        ?.flavorText
+                                        ?.replace("\n", " ") ?: ""
+
+                                    details.toEntity(description)
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                        }.awaitAll().filterNotNull()
+
+                        if (entities.isNotEmpty()) {
+                            dao.insertPokemonList(entities)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("PokemonSync", "Erro ao sincronizar", e)
+            }
+        }
+    }
 }

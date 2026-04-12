@@ -9,4 +9,6 @@ interface PokemonRepository {
     suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon>
     suspend fun toggleFavorite(pokemonId: Int, isFavorite: Boolean)
     fun getFavoritePokemon(): Flow<List<Pokemon>>
+
+    suspend fun syncAllPokemons(limit: Int)
 }

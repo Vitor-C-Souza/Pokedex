@@ -30,6 +30,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon WHERE isFavorite = 1 ORDER BY id ASC")
     fun getFavoritePokemon(): Flow<List<PokemonEntity>>
 
+    @Query("SELECT COUNT(*) FROM pokemon")
+    suspend fun getPokemonCount(): Int
+
     @Query("DELETE FROM pokemon")
     suspend fun clearAll()
 }
