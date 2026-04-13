@@ -31,7 +31,7 @@ class PokemonRepositoryImpl(
 
             if (localPokemon.size < offset + limit) {
                 val response = api.getPokemonList(limit, offset)
-                
+
                 val entities = response.results.map { basicPokemon ->
                     val details = api.getPokemonDetail(basicPokemon.name)
                     val species = api.getPokemonSpecies(details.id)
@@ -47,15 +47,15 @@ class PokemonRepositoryImpl(
 
                 dao.insertPokemonList(entities)
             }
-            
+
             val allUpdated = dao.getAllPokemon().first().sortedBy { it.id }
             val fromIndex = offset.coerceAtMost(allUpdated.size)
             val toIndex = (offset + limit).coerceAtMost(allUpdated.size)
-            
+
             val pageItems = allUpdated.subList(fromIndex, toIndex).map { it.toDomain() }
-            
+
             Result.success(pageItems)
-            
+
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -70,8 +70,19 @@ class PokemonRepositoryImpl(
     override suspend fun catchPokemonByNameOrId(nameOrId: String): Result<Pokemon> =
         coroutineScope {
             try {
-                val localPokemon = dao.getAllPokemon().first()
+                // Tenta pegar do banco local primeiro
+                val localEntity = dao.getPokemonByIdOrName(nameOrId.lowercase().trim())
+                val localPokemon = localEntity?.toDomain()
 
+                // Verificamos se já temos os dados completos (moves e evolutions) persistidos no banco
+                if (localPokemon != null &&
+                    !localPokemon.moves.isNullOrEmpty() &&
+                    !localPokemon.evolutions.isNullOrEmpty()
+                ) {
+                    return@coroutineScope Result.success(localPokemon)
+                }
+
+                // Se não tem localmente OU está incompleto, busca na API
                 val details = api.getPokemonDetail(nameOrId.lowercase().trim())
                 val species = api.getPokemonSpecies(details.id)
                 val description = species.flavorTextEntries
@@ -99,17 +110,11 @@ class PokemonRepositoryImpl(
                             detail?.minHappiness != null -> "Happiness"
                             detail?.trigger?.name == "trade" -> "Trade"
                             detail?.knownMove != null -> "Knows ${
-                                detail.knownMove.name.replace(
-                                    "-",
-                                    " "
-                                )
+                                detail.knownMove.name.replace("-", " ")
                             }"
 
                             detail?.location != null -> "Location: ${
-                                detail.location.name.replace(
-                                    "-",
-                                    " "
-                                )
+                                detail.location.name.replace("-", " ")
                             }"
 
                             else -> null
@@ -121,6 +126,7 @@ class PokemonRepositoryImpl(
                     addEvolution(ecoChain.chain)
                 }
 
+                // Buscar Detalhes dos Movimentos
                 val moveDetails = details.moves.map { moveEntry ->
                     async {
                         val latestVersionDetail = moveEntry.versionGroupDetails.lastOrNull()
@@ -153,18 +159,20 @@ class PokemonRepositoryImpl(
                     }
                 }.awaitAll()
 
-                val existing = localPokemon.find { it.id == details.id }
-
                 val pokemon = details.toDomain().copy(
                     description = description,
-                    isFavorite = existing?.isFavorite ?: false,
+                    isFavorite = localEntity?.isFavorite ?: false,
                     moves = moveDetails,
                     evolutions = evolutions
                 )
 
-                val entity =
-                    details.toEntity(description, isFavorite = existing?.isFavorite ?: false)
-                dao.insertPokemonList(listOf(entity))
+                val entityWithDetails = details.toEntity(
+                    description = description,
+                    isFavorite = localEntity?.isFavorite ?: false,
+                    moves = moveDetails,
+                    evolutions = evolutions
+                )
+                dao.insertPokemonList(listOf(entityWithDetails))
 
                 Result.success(pokemon)
             } catch (e: Exception) {
@@ -186,9 +194,11 @@ class PokemonRepositoryImpl(
         coroutineScope {
             try {
                 val localCount = dao.getPokemonCount()
+                if (localCount >= limit) return@coroutineScope
+
                 val response = api.getPokemonList(limit, localCount)
 
-                response.results.chunked(20).forEach { batch ->
+                response.results.chunked(15).forEach { batch ->
                     coroutineScope {
                         val entities = batch.map { basic ->
                             async {

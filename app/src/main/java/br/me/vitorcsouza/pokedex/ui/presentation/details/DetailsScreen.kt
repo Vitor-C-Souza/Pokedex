@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,14 +43,26 @@ fun DetailsScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    state.pokemon?.let {
-        DetailsScreenContent(
-            pokemon = it,
-            modifier = modifier,
-            onBackClick = onBackClick,
-            onFavoriteClick = { viewModel.toggleFavorite() },
-            onSeeAllMovesClick = { onSeeAllMovesClick(it.name.orEmpty()) }
-        )
+    Box(modifier = modifier.fillMaxSize()) {
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else if (state.error != null) {
+            Text(
+                text = state.error ?: "Unknown error",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        } else {
+            state.pokemon?.let {
+                DetailsScreenContent(
+                    pokemon = it,
+                    modifier = modifier,
+                    onBackClick = onBackClick,
+                    onFavoriteClick = { viewModel.toggleFavorite() },
+                    onSeeAllMovesClick = { onSeeAllMovesClick(it.name.orEmpty()) }
+                )
+            }
+        }
     }
 }
 

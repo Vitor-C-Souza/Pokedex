@@ -35,4 +35,7 @@ interface PokemonDao {
 
     @Query("DELETE FROM pokemon")
     suspend fun clearAll()
+
+    @Query("SELECT * FROM pokemon WHERE CAST(id AS TEXT) = :nameOrId OR name = :nameOrId")
+    suspend fun getPokemonByIdOrName(nameOrId: String): PokemonEntity?
 }

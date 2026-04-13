@@ -3,8 +3,10 @@ package br.me.vitorcsouza.pokedex.ui.presentation.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import br.me.vitorcsouza.pokedex.domain.usecase.GetPokemonByNameOrId
 import br.me.vitorcsouza.pokedex.domain.usecase.ToggleFavorite
+import br.me.vitorcsouza.pokedex.ui.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,9 +22,8 @@ class DetailsViewModel(
     val state: StateFlow<DetailsState> = _state.asStateFlow()
 
     init {
-        savedStateHandle.get<String>("pokemonName")?.let { nameOrId ->
-            loadPokemon(nameOrId)
-        }
+        val details = savedStateHandle.toRoute<Screen.Details>()
+        loadPokemon(details.pokemonName)
     }
 
     private fun loadPokemon(nameOrId: String) {

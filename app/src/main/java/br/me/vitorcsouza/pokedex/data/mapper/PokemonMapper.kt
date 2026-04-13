@@ -2,12 +2,16 @@ package br.me.vitorcsouza.pokedex.data.mapper
 
 import br.me.vitorcsouza.pokedex.data.local.entity.PokemonEntity
 import br.me.vitorcsouza.pokedex.data.remote.dto.PokemonDetailDto
+import br.me.vitorcsouza.pokedex.domain.model.EvolutionInfo
 import br.me.vitorcsouza.pokedex.domain.model.MoveInfo
 import br.me.vitorcsouza.pokedex.domain.model.Pokemon
+import kotlinx.serialization.json.Json
 
 fun PokemonDetailDto.toEntity(
     description: String = "",
-    isFavorite: Boolean = false
+    isFavorite: Boolean = false,
+    moves: List<MoveInfo>? = null,
+    evolutions: List<EvolutionInfo>? = null
 ): PokemonEntity {
     val hp = stats.find { it.stat.name == "hp" }?.baseStat ?: 0
     val attack = stats.find { it.stat.name == "attack" }?.baseStat ?: 0
@@ -30,11 +34,28 @@ fun PokemonDetailDto.toEntity(
         specialDefense = specialDefense,
         speed = speed,
         description = description,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        movesJson = moves?.let { Json.encodeToString(it) },
+        evolutionsJson = evolutions?.let { Json.encodeToString(it) }
     )
 }
 
 fun PokemonEntity.toDomain(): Pokemon {
+    val moves = movesJson?.let {
+        try {
+            Json.decodeFromString<List<MoveInfo>>(it)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+    val evolutions = evolutionsJson?.let {
+        try {
+            Json.decodeFromString<List<EvolutionInfo>>(it)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     return Pokemon(
         id = id,
         name = name,
@@ -49,7 +70,9 @@ fun PokemonEntity.toDomain(): Pokemon {
         specialDefense = specialDefense,
         speed = speed,
         description = description,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        moves = moves,
+        evolutions = evolutions
     )
 }
 

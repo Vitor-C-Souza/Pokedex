@@ -1,5 +1,6 @@
 package br.me.vitorcsouza.pokedex.di
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.room.Room
 import br.me.vitorcsouza.pokedex.data.local.Database
 import br.me.vitorcsouza.pokedex.data.remote.PokeApi
@@ -58,5 +59,7 @@ val AppModule = module {
 
     // ViewModels
     viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { DetailsViewModel(get(), get(), get()) }
+    viewModel { (handle: SavedStateHandle) ->
+        DetailsViewModel(get(), get(), handle)
+    }
 }

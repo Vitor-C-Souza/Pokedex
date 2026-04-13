@@ -20,5 +20,8 @@ data class PokemonEntity(
     val defense: Int,
     val specialAttack: Int,
     val specialDefense: Int,
-    val speed: Int
+    val speed: Int,
+
+    val movesJson: String? = null,
+    val evolutionsJson: String? = null
 )
